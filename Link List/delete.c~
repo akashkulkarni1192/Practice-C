@@ -1,0 +1,9 @@
+#include<stdio.h>
+void* add(void *a,void *b){
+	return (int)*a+*b;
+}
+int main(){
+	int i=5,j=6;
+	printf("\nSum :%d",add(&i,&j));
+	return 0;
+}

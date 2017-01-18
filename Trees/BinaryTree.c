@@ -1,0 +1,179 @@
+-#include<stdio.h>
+#include<stdlib.h>
+typedef struct node{
+	int info;
+	struct node *left;
+	struct node *right;
+}NODE;
+NODE* newnode(int data){
+	NODE *n=(NODE*)malloc(sizeof(NODE));
+	n->left=n->right=NULL;
+	n->info=data;
+	return n;
+}
+NODE* insert(NODE *root,int data){
+	if(root==NULL)
+		root=newnode(data);
+	else if(data<root->info)
+		root->left=insert(root->left,data);
+	else
+		root->right=insert(root->right,data);
+	return root;
+}
+void inorder(NODE *root){
+	if(root==NULL)
+		return;
+	inorder(root->left);
+	printf("\t%d",root->info);
+	inorder(root->right);
+}
+void preorder(NODE *root){
+	if(root==NULL)
+		return;
+	printf("\t%d",root->info);
+	preorder(root->left);
+	preorder(root->right);
+}
+void postorder(NODE *root){
+	if(root==NULL)
+		return;
+	postorder(root->left);
+	postorder(root->right);
+	printf("\t%d",root->info);
+}
+void display(NODE *root){
+	printf("\nInorder :");
+	inorder(root);
+	printf("\nPreorder :");
+	preorder(root);
+	printf("\nPostorder :");
+	postorder(root);
+}
+NODE* delete(NODE *root,int key){
+	NODE *suc,*temp;
+	if(root==NULL){
+		printf("\nUnderFlow");
+		return NULL;
+	}
+	else if(key<root->info)
+		root->left=delete(root->left,key);
+	else if(key>root->info)
+		root->right=delete(root->right,key);
+	else{
+		if(root->left==NULL){
+			temp=root->right;
+			free(root);
+			return temp;
+		}
+		else if(root->right==NULL){
+			temp=root->left;
+			free(root);
+			return temp;
+		}
+		suc=root->right;
+		while(suc->left!=NULL)
+			suc=suc->left;
+		root->info=suc->info;
+		root->right=delete(root->right,suc->info);
+	}
+	return root;
+} 
+int size(NODE *root,int s){
+	if(root==NULL)
+		return s;
+	s=s+1;
+	s=size(root->left,s);
+	s=size(root->right,s);
+	return s;
+}
+int sizeEff(NODE *root){
+	if(root==NULL)
+		return 0;
+	return 1+sizeEff(root->left)+sizeEff(root->right);
+}
+int max(int a,int b){
+	return (a<b)?b:a;
+}
+int maxDepth(NODE *root){
+	if(root==NULL)
+		return 0;
+	return 1+max(maxDepth(root->left),maxDepth(root->right));
+}
+void deleteTree(NODE *root){
+	if(root==NULL)
+		return;
+	deleteTree(root->left);
+	deleteTree(root->right);
+	free(root);
+}
+NODE* deleteSubTree(NODE *root,int key){
+	if(root==NULL)
+		printf("\nNot Found");
+	else if(key<root->info)
+		root->left=deleteSubTree(root->left,key);
+	else if(key>root->info)
+		root->right=deleteSubTree(root->right,key);
+	else{
+		deleteTree(root);
+		return NULL;
+	}
+	return root;
+}
+void path(NODE *root,int key){
+	if(root==NULL)
+		return;
+	printf("\t%d",root->info);
+	if(key<root->info)
+		path(root->left,key);
+	else
+		path(root->right,key);
+}
+int level(NODE *root,int key,int l){
+	int lev;
+	if(root==NULL)
+		return 0;
+	else if(root->info==key)
+		return l;
+	lev=level(root->left,key,l+1);
+	lev=level(root->right,key,l+1);
+	return lev;
+}
+int main(){
+	NODE *root=NULL;
+	int ch,data;
+	while(1){
+		printf("\nMENU\n1.Insert\n2.Delete\n3.Display\n4.Size of tree\n5.Max Depth\n6.Delete SubTree\n7.Path of node\n8.Level\n9.Exit\nEnter choice :");
+		scanf("%d",&ch);
+		switch(ch){
+			case 1:	printf("\nEnter info :");
+					scanf("%d",&data);
+					root=insert(root,data);
+					break;
+			case 2:	printf("\nEnter key :");
+					scanf("%d",&data);
+					root=delete(root,data);
+			case 3:	display(root);
+					break;
+			case 4:	printf("\nSize : %d\nSizeEff=%d",size(root,0),sizeEff(root));
+					break;
+			case 5:	printf("\nMax Depth : %d",maxDepth(root));
+					break;
+			case 6:	printf("\nEnter key :");
+					scanf("%d",&data);
+					root=deleteSubTree(root,data);
+					break;
+			case 7:	printf("\nEnter key :");
+					scanf("%d",&data);
+					printf("\nPath : ");
+					path(root,data);
+					break;
+			case 8:	printf("\nEnter key :");
+					scanf("%d",&data);
+					printf("\nLevel of %d :",data);
+					printf("\t%d",level(root,data,1));
+					break;
+			case 9:	return 0;
+			default:	printf("\nInvalid choice");
+		}
+	}
+}

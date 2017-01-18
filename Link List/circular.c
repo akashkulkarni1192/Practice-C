@@ -1,0 +1,66 @@
+#include<stdio.h>
+#include<stdlib.h>
+typedef struct node{
+	int info;
+	struct node *link;
+}NODE;
+NODE* getnode(){
+	NODE *nn=(NODE*)malloc(sizeof(NODE));
+	return nn;
+}
+void display(NODE *head){
+	NODE *first=head->link;
+	if(head->link==NULL)
+		return;
+	printf("%d",first->info);
+	first=first->link;
+	while(first!=NULL){
+		printf(" -> %d",first->info);
+		first=first->link;
+	}
+}
+void insert(NODE *head){
+	NODE *first=head->link,*nn=getnode();
+	printf("\nEnter info : ");
+	scanf("%d",&nn->info);
+	nn->link=NULL;
+	if(head->link==NULL){
+		head->link=nn;
+		return;	
+	}
+	while(first->link!=NULL)
+		first=first->link;
+	first->link=nn;
+}
+void detectLoop(NODE *head){
+	NODE *first=head->link,*second=head->link;
+	while(first!=NULL && second!=NULL){
+		first=first->link;
+		if(second->link==NULL)
+			break;
+		second=second->link->link;
+		printf("\nfirst=%d\tsecond=%d ",first->info,second->info);
+		if(second->link==first){
+			printf("\nLoop Detected (%d<-->%d)",first->info,second->info);
+			return;
+		}
+	}
+	printf("\nNo loop");
+}
+int main(){
+	NODE *head=getnode(),*node,*first;
+	int n=1;
+	head->info=555;
+	head->link=NULL;
+	printf("\nEnter 5 nodes :");
+	while(n++<=5){
+		insert(head);
+		display(head);
+		
+	}
+	first=head;
+	head->link->link->link=head->link;		
+	
+	detectLoop(head);
+	return 0;
+}

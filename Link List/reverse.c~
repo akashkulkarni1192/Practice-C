@@ -1,0 +1,80 @@
+#include<stdio.h>
+#include<stdlib.h>
+typedef struct node{
+	int info;
+	struct node *link;
+}NODE;
+NODE* getnode(){
+	return (NODE *)malloc(sizeof(NODE));
+}
+void display(NODE *head){
+	NODE *first=head->link;
+	if(head->link==NULL){
+		printf("\nEmpty");	
+	}
+	printf("\n%d",first->info);
+	first=first->link;
+	while(first!=NULL){
+		printf(" -> %d",first->info);
+		first=first->link;
+	}
+	printf("\n");
+}
+void insert(NODE *head){
+	NODE *first=head->link,*nn=getnode();
+	printf("\nEnter info :");
+	scanf("%d",&nn->info);
+	nn->link=NULL;
+	if(head->link==NULL){
+		head->link=nn;
+		return;
+	}
+	while(first->link!=NULL)
+		first=first->link;
+	first->link=nn;
+}
+void recurseReverse(NODE *head,NODE *prev,NODE *cur){
+	if(cur->link==NULL){
+		head->link=cur;
+		cur->link=prev;
+		//return cur;
+	}
+	recurseReverse(head,cur,cur->link);
+	cur->link=prev;
+}
+NODE* reverse(NODE *head){
+	NODE *cur,*prev,*temp;
+	if(head->link==NULL)
+		return;
+	if(head->link->link==NULL)
+		return;
+	prev=head->link;
+	cur=head->link->link;
+	prev->link=NULL;
+	while(cur!=NULL){
+		printf("%d <- %d",prev->info,cur->info);
+		temp=cur->link;
+		cur->link=prev;
+		prev=cur;
+		cur=temp;
+	}
+	head->link=prev;
+	printf("\nhead points to %d",prev->info);
+	return head;
+}	
+int main(){
+	NODE *head=getnode(),*first,*second;
+	int i,n;
+	head->link=NULL;
+	printf("\nEnter no of nodes (above 5):");
+	scanf("%d",&n);
+	for(i=0;i<n;i++)
+		insert(head);
+	display(head);
+	//head=reverse(head);
+	if(head->link->link!=NULL)
+		recurseReverse(head,NULL,head->link);
+	display(head);
+	return 0;
+}
+

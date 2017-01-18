@@ -1,0 +1,84 @@
+#include<stdio.h>
+#include<stdlib.h>
+typedef struct node{
+	int info;
+	struct node *left,*right;
+}NODE;
+NODE* getnode(int data){
+	NODE *nn = (NODE*)malloc(sizeof(NODE));
+	nn->info = data;
+	nn->left=nn->right=NULL;
+	return nn;
+}
+NODE* insert(NODE *root,int data){
+	if(root==NULL)
+		return getnode(data);
+	else if(data<root->info)
+		root->left = insert(root->left,data);
+	else
+		root->right = insert(root->right,data);
+	return root;
+}
+void levelOrder(NODE *root,int l){
+	if(root==NULL)
+		return;
+	if(l==1){
+		printf("%d\t",root->info);
+		return ;
+	}
+	else{
+		levelOrder(root->left,l-1);
+		levelOrder(root->right,l-1);
+	}
+}
+int height(NODE *root){
+	if(root==NULL)
+		return 0;
+	return 1+max(height(root->left),height(root->right));
+}
+void display(NODE *root){
+	int i,h=height(root);
+	for(i=1;i<=h;i++){
+		printf("\nLevel %d :\t ",i);
+		levelOrder(root,i);
+	}
+}
+int find(NODE *root,int key){
+	if(root==NULL)
+		return 0;
+	if(key==root->info)
+		return 1;
+	return find(root->left,key)||find(root->right,key);		
+}
+NODE* commonAncestor (NODE *root,int n1,int n2){
+	NODE *ans=NULL;
+	if(root==NULL)
+		return NULL;
+	if(find(root->left,n1)&&find(root->right,n2))
+		return root;
+	if((ans=commonAncestor(root->left,n1,n2))!=NULL)
+		return ans;
+	return commonAncestor(root->right,n1,n2);		
+}
+int main(){
+	NODE *root=NULL;
+	int ch,data,n1,n2;
+	while(1){
+		printf("\nMENU\n1.Insert\n2.Display\n3.Common Ancestor\n4.Exit\nEnter Choice : ");
+		scanf("%d",&ch);
+		switch(ch){
+			case 1:	printf("\nEnter info : ");
+					scanf("%d",&data);	
+					root=insert(root,data);
+					break;
+			case 2:	display(root);
+					break;
+			case 3:	printf("\nEnter node 1 and 2: ");
+					scanf("%d%d",&n1,&n2);
+					printf("\nCommon Ancestore : %d ",commonAncestor(root,n1,n2)->info);
+					break;
+			case 4:	return  0;
+			default:	printf("\nInvalid Choice ");
+		}
+	}
+}
